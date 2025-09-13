@@ -1,0 +1,230 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(uuid())
+  username      String
+  email         String          @unique
+  password      String?
+  bio           String
+  linkedin      String?
+  github        String?
+  website       String?
+  userType      UserType
+  ProviderOAuth ProviderOAuth[]
+  portfolios    Portfolio?
+  ratings       Rating[]
+
+  messageSent      Message[]          @relation("MessageSent")
+  messageReceived  Message[]          @relation("MessageReceived")
+  FavorateProjects FavorateProjects[]
+  Comments         Comments[]
+  Appreciate       Appreciate[]
+  Feedback         Feedback[]
+
+  @@map("tb_user")
+}
+
+model ProviderOAuth {
+  id         String             @id @default(uuid())
+  userId     String
+  provider   SocialProviderType
+  providerId String
+  email      String
+  user       User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerId])
+  @@map("tb_provider_oauth")
+}
+
+model Message {
+  id         String        @id @default(uuid())
+  content    String
+  status     MessageStatus
+  createAt   DateTime
+  updateAt   DateTime
+  senderId   String        @default("anonymous_user_id")
+  sender     User          @relation("MessageSent", fields: [senderId], references: [id], onDelete: SetDefault)
+  receiverId String        @default("anonymous_user_id")
+  receiver   User          @relation("MessageReceived", fields: [receiverId], references: [id], onDelete: SetDefault)
+
+  @@map("tb_message")
+}
+
+model Portfolio {
+  id          String    @id @default(uuid())
+  name        String
+  description String
+  pagelink    String?
+  authorId    String    @unique
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  works       Project[]
+
+  @@map("tb_portfolio")
+}
+
+model Competition {
+  id           String               @id @default(uuid())
+  name         String
+  description  String
+  createdAt    DateTime             @default(now())
+  startsAt     DateTime?
+  endsAt       DateTime?
+  worksDetails ProjectCompDetails[]
+  Rating       Rating[]
+
+  @@map("tb_competition")
+}
+
+model Project {
+  id                       String               @id @default(uuid())
+  name                     String
+  description              String
+  category                 ProjectCategory
+  githublink               String?
+  portfolioId              String
+  portfolio                Portfolio            @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  Rating                   Rating[]
+  ProjectCompDetails       ProjectCompDetails[]
+  FavorateProjects         FavorateProjects[]
+  Comments                 Comments[]
+  Appreciate               Appreciate[]
+  Feedback                 Feedback[]
+  AppreciateProjectDetails PostMetrics?
+
+  @@map("tb_project")
+}
+
+model Appreciate {
+  id            String @id @default(uuid())
+  userId        String
+  projectId     String
+  postMetricsId String
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project     Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  postMetrics PostMetrics @relation(fields: [postMetricsId], references: [id])
+  Feedback    Feedback[]
+
+  @@unique([userId, projectId])
+  @@map("tb_appreciate")
+}
+
+model PostMetrics {
+  id              String @id @default(uuid())
+  appreciateCount Int
+  projectId       String @unique()
+
+  project    Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  Appreciate Appreciate[]
+
+  @@map("tb_post_metrics")
+}
+
+model FavorateProjects {
+  id        String @id @default(uuid())
+  userId    String
+  projectId String
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+  @@map("tb_favorate_projects")
+}
+
+model Comments {
+  id         String   @id @default(uuid())
+  content    String
+  userId     String
+  projectId  String
+  created_at DateTime
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, created_at])
+  @@map("tb_comments")
+}
+
+model Feedback {
+  id           String       @id @default(uuid())
+  content      String
+  userId       String
+  projectId    String
+  appreciateId String
+  type         FeedbackType
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project    Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  appreciate Appreciate @relation(fields: [appreciateId], references: [id])
+
+  @@map("tb_feedback")
+}
+
+model Rating {
+  id                   String             @id @default(uuid())
+  score                Float
+  userId               String             @default("anonymous_user_id")
+  projectId            String
+  competitionId        String
+  projectCompDetailsID String
+  user                 User               @relation(fields: [userId], references: [id], onDelete: SetDefault)
+  project              Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  competition          Competition        @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  portfolioDetails     ProjectCompDetails @relation(fields: [projectCompDetailsID], references: [id], onDelete: Cascade)
+
+  @@unique([userId, competitionId, projectId])
+  @@map("tb_rating")
+}
+
+model ProjectCompDetails {
+  id             String      @id @default(uuid())
+  totalReviewers Int
+  totalScore     Float
+  projectId      String
+  competitionId  String
+  rating         Rating[]
+  project        Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  competition    Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+
+  @@unique([competitionId, projectId])
+  @@map("tb_project_comp_details")
+}
+
+enum UserType {
+  DEVELOPER
+  EMPLOYER
+}
+
+enum FeedbackType {
+  PUBLIC
+  PRIVATE
+}
+
+enum ProjectCategory {
+  FULLSTACK
+  FRONTEND
+  BACKEND
+  DESIGN
+  MOBILE
+  DATA_ANALYSIS
+  OTHER
+}
+
+enum SocialProviderType {
+  GOOGLE
+}
+
+enum MessageStatus {
+  READ
+  UNREAD
+  RECEIVED
+  UNRECEIVED
+}
