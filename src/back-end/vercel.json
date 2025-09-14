@@ -8,7 +8,6 @@
   ],
   "functions": {
     "dist/app.js": {
-      "runtime": "@vercel/node",
       "maxDuration": 10 
     }
   }
