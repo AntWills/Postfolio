@@ -1,13 +1,7 @@
 {
   "version": 2,
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/dist/src/app.js"
-    }
-  ],
   "functions": {
-    "dist/app.js": {
+    "dist/src/app.js": {
       "maxDuration": 10 
     }
   }
