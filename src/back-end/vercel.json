@@ -1,8 +1,15 @@
 {
-  "rewrites": [
+  "version": 2,
+  "routes": [
     {
-      "source": "/(.*)",
-      "destination": "/src/app.js"
+      "src": "/(.*)",
+      "dest": "/dist/src/app.js"
     }
-  ]
+  ],
+  "functions": {
+    "dist/app.js": {
+      "runtime": "@vercel/node",
+      "maxDuration": 10 
+    }
+  }
 }
