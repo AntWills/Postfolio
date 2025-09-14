@@ -6,9 +6,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "docs": "typedoc --options typedoc.json",
     "dev": "tsx watch --env-file=.env src/app.ts",
-    "build": "tsc && tsc-alias -p tsconfig.json && prisma generate",
+    // "build": "tsc && tsc-alias -p tsconfig.json && prisma generate",
     "build:dev": "tsc && tsc-alias -p tsconfig.json",
-    "vercel-build": "npm run build",
+    "vercel-build": "tsc && tsc-alias -p tsconfig.json && prisma generate",
     "postinstall": "prisma generate"
   },
   "keywords": [],
