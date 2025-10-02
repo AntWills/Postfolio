@@ -9,7 +9,7 @@ import {
 import { AppComposer } from "@compositionRoot/appComposer";
 import { configureProvaders } from "@infrastructure/fastify/Providers";
 
-function createApp(): FastifyInstance {
+export function createApp(): FastifyInstance {
   const app = Fastify({
     logger: false,
   }).withTypeProvider<ZodTypeProvider>();
@@ -37,22 +37,23 @@ function createApp(): FastifyInstance {
   return app;
 }
 
-const app = createApp();
+// const app = createApp();
 
-export default async function handler(req: any, res: any) {
-  try {
-    await app.ready();
-    app.server.emit("request", req, res);
+// export default async function handler(req: any, res: any) {
+//   try {
+//     await app.ready();
+//     app.server.emit("request", req, res);
 
-    // res.status(200).json({ message: "API online na Vercel 🚀" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ error: "Internal Server Error" });
-  }
-}
+//     // res.status(200).json({ message: "API online na Vercel 🚀" });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send({ error: "Internal Server Error" });
+//   }
+// }
 
 // Rodar localmente fora da Vercel
 if (process.env.NODE_ENV === "development") {
+  const app = createApp();
   const PORT = 8080;
   app.listen({ port: PORT, host: "0.0.0.0" }).then(() => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);
