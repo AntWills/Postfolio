@@ -27,6 +27,8 @@
     "esModuleInterop": true,
     // "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
     "strict": true,
     "skipLibCheck": true,
     "experimentalDecorators": true,
