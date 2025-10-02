@@ -1,13 +1,13 @@
 import Fastify, { FastifyInstance } from "fastify";
 import fastifyCors from "@fastify/cors";
-import "./infrastructure/types/fastify";
+import "./infrastructure/types/fastify.js";
 import {
   serializerCompiler,
   validatorCompiler,
   ZodTypeProvider,
 } from "fastify-type-provider-zod";
-import { AppComposer } from "./compositionRoot/appComposer";
-import { configureProvaders } from "./infrastructure/fastify/Providers";
+import { AppComposer } from "./compositionRoot/appComposer.js";
+import { configureProvaders } from "./infrastructure/fastify/Providers.js";
 
 export function createApp(): FastifyInstance {
   const app = Fastify({
