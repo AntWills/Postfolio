@@ -2,8 +2,8 @@
   "compilerOptions": {
     // "typeRoots": ["./node_modules/@types"],
     // "types": ["node"],
-    "target": "es2024",
-    "module": "es2022",
+    "target": "esnext",
+    "module": "esnext",
     "moduleResolution": "bundler",
     // "baseUrl": ".",
     "rootDir": ".",

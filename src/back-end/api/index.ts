@@ -9,7 +9,7 @@
 //   return proxy(req, res);
 // }
 
-import { createApp } from "../src/app";
+import { createApp } from "../src/app.js";
 
 export default async function handler(req: any, res: any) {
   try {
