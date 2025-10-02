@@ -1,8 +1,9 @@
 {
   "version": 2,
-  "functions": {
-    "dist/src/app.js": {
-      "maxDuration": 10 
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "dist/src/app.js"
     }
-  }
+  ]
 }
